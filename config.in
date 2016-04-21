@@ -1,0 +1,10 @@
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
+
+/* information */
+#define VERSION  "@rmthumbs_VERSION@"
+#define AUTHOR   "Kurt Kanzenbach"
+#define EMAIL    "kurt@kmk-computers.de"
+#define PROGNAME "rmthumbs"
+
+#endif /* _CONFIG_H_ */
