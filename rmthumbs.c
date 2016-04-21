@@ -77,12 +77,17 @@ static void crawl(const char *path)
 			}
 
 			while (errno = 0, (direntptr = readdir(dirptr)) != NULL) {
-				char *name  = direntptr->d_name;
-				int pathlen = strlen(path);
-				char new_path[pathlen + strlen(name) + 2]; /* + '/' + '\0' */
+				char *name     = direntptr->d_name;
+				size_t pathlen = strlen(path), newlen;
+				newlen = pathlen + strlen(name) + 2;  /* + '/' + '\0' */
+				if (newlen < pathlen) {
+					fprintf(stderr, "Too long path length detected!\n");
+					continue;
+				}
+				char new_path[newlen];
 
 				/* jump over . and .. */
-				if (!strcmp(name, ".")|| !strcmp(name, ".."))
+				if (!strcmp(name, ".") || !strcmp(name, ".."))
 					continue;
 
 				/* build new path */
