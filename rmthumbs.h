@@ -11,9 +11,9 @@ struct config {
 
 /* printing */
 #define pr_fmt "[%s %s:%d]: %s  " fmt "\n"
-#define err(fmt, args...)												\
+#define err(fmt, ...)													\
 	do {																\
-		fprintf(stderr, pr_fmt(fmt), "ERROR", __FILE__, __LINE__, ##args); \
+		fprintf(stderr, pr_fmt(fmt), "ERROR", __FILE__, __LINE__, ##__VA_ARGS__); \
 		exit(EXIT_FAILURE);												\
 	} while (0)
 
