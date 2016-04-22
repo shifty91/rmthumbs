@@ -1,6 +1,7 @@
 #ifndef __RMTHUMBS_H__
 #define __RMTHUMBS_H__
 
+#include <stdio.h>
 #include <stdlib.h>
 
 /* config parameters */
