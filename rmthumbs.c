@@ -66,50 +66,49 @@ static void crawl(const char *path)
 		return;
 	}
 
-	if (conf.recursive) {
-		/* work recursively */
-		if (S_ISDIR(probs.st_mode)) {
-			DIR *dirptr = opendir(path);
+	if (!conf.recursive)
+		return;
 
-			if (!dirptr) {
-				perror("opendir failed()");
-				return;
-			}
+	/* work recursively */
+	if (S_ISDIR(probs.st_mode)) {
+		DIR *dirptr = opendir(path);
 
-			while (errno = 0, (direntptr = readdir(dirptr)) != NULL) {
-				char *name     = direntptr->d_name;
-				size_t pathlen = strlen(path), newlen;
-				newlen = pathlen + strlen(name) + 2;  /* + '/' + '\0' */
-				if (newlen < pathlen) {
-					fprintf(stderr, "Too long path length detected!\n");
-					continue;
-				}
-				char new_path[newlen];
-
-				/* jump over . and .. */
-				if (!strcmp(name, ".") || !strcmp(name, ".."))
-					continue;
-
-				/* build new path */
-				strcpy(new_path, path);
-				if (new_path[pathlen - 1] != '/')
-					strcat(new_path, "/");
-
-				strcat(new_path, name);
-
-				/* recursively for new Path */
-				crawl(new_path);
-			}
-
-			if (errno != 0)
-				perror("readdir() failed");
-
-			if (closedir(dirptr) == -1)
-				perror("closedir() failed");
+		if (!dirptr) {
+			perror("opendir failed()");
+			return;
 		}
-	}
 
-	return;
+		while (errno = 0, (direntptr = readdir(dirptr)) != NULL) {
+			char *name     = direntptr->d_name;
+			size_t pathlen = strlen(path), newlen;
+			newlen = pathlen + strlen(name) + 2;  /* + '/' + '\0' */
+			if (newlen < pathlen) {
+				fprintf(stderr, "Too long path length detected!\n");
+				continue;
+			}
+			char new_path[newlen];
+
+			/* jump over . and .. */
+			if (!strcmp(name, ".") || !strcmp(name, ".."))
+				continue;
+
+			/* build new path */
+			strcpy(new_path, path);
+			if (new_path[pathlen - 1] != '/')
+				strcat(new_path, "/");
+
+			strcat(new_path, name);
+
+			/* recursively for new Path */
+			crawl(new_path);
+		}
+
+		if (errno != 0)
+			perror("readdir() failed");
+
+		if (closedir(dirptr) == -1)
+			perror("closedir() failed");
+	}
 }
 
 int main(int argc, char *argv[])
