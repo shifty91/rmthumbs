@@ -22,7 +22,7 @@ if (NOT HAVE_LSTAT)
 endif()
 
 # build
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -pedantic")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Wall -pedantic")
 set(CMAKE_BUILD_TYPE "Release")
 add_executable(rmthumbs rmthumbs.c)
 

@@ -51,7 +51,7 @@ static void crawl(const char *path)
 	if (S_ISREG(probs.st_mode)) {
 		for (int i = 0; windows_files[i]; ++i) {
 			/* delete files, if necessary */
-			if (!strcmp(basename(path), windows_files[i])) {
+			if (!strcmp(basename((char *)path), windows_files[i])) {
 				if (remove(path)) {
 					perror("remove() failed");
 					continue;
