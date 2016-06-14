@@ -37,6 +37,17 @@ static void usage(void)
 	fprintf(stderr, "(C) 2015 %s <%s>  \n", AUTHOR, EMAIL);
 }
 
+static void *my_memcpy(char *dst, const char *src, size_t n)
+{
+    const char *ps = src;
+    char *pd = dst;
+
+    for (size_t i = 0; i < n; ++i)
+        *pd++ = *ps++;
+
+    return pd;
+}
+
 static void crawl(const char *path)
 {
 	struct stat probs;
@@ -66,49 +77,42 @@ static void crawl(const char *path)
 		return;
 	}
 
-	if (!conf.recursive)
+	if (!conf.recursive || !S_ISDIR(probs.st_mode))
 		return;
 
 	/* work recursively */
-	if (S_ISDIR(probs.st_mode)) {
-		DIR *dirptr = opendir(path);
+	DIR *dirptr = opendir(path);
 
-		if (!dirptr) {
-			perror("opendir failed()");
-			return;
-		}
-
-		while (errno = 0, (direntptr = readdir(dirptr)) != NULL) {
-			char *name     = direntptr->d_name;
-			size_t pathlen = strlen(path), newlen;
-			newlen = pathlen + strlen(name) + 2;  /* + '/' + '\0' */
-			if (newlen < pathlen) {
-				fprintf(stderr, "Too long path length detected!\n");
-				continue;
-			}
-			char new_path[newlen];
-
-			/* jump over . and .. */
-			if (!strcmp(name, ".") || !strcmp(name, ".."))
-				continue;
-
-			/* build new path */
-			strcpy(new_path, path);
-			if (new_path[pathlen - 1] != '/')
-				strcat(new_path, "/");
-
-			strcat(new_path, name);
-
-			/* recursively for new Path */
-			crawl(new_path);
-		}
-
-		if (errno != 0)
-			perror("readdir() failed");
-
-		if (closedir(dirptr) == -1)
-			perror("closedir() failed");
+	if (!dirptr) {
+		perror("opendir failed()");
+		return;
 	}
+
+	while (errno = 0, (direntptr = readdir(dirptr)) != NULL) {
+		char *name	   = direntptr->d_name, *p;
+		size_t pathlen = strlen(path), namelen = strlen(name);
+		char new_path[pathlen + namelen + 2]; /* + '/' + '\0' */
+
+		/* jump over . and .. */
+		if (!strcmp(name, ".") || !strcmp(name, ".."))
+			continue;
+
+		/* build new path */
+		p = my_memcpy(new_path, path, pathlen);
+		if (new_path[pathlen - 1] != '/')
+			p = my_memcpy(p, "/", 1);
+
+		*((char*)my_memcpy(p, name, namelen)) = '\0';
+
+		/* recursively for new path */
+		crawl(new_path);
+	}
+
+	if (errno != 0)
+		perror("readdir() failed");
+
+	if (closedir(dirptr) == -1)
+		perror("closedir() failed");
 }
 
 int main(int argc, char *argv[])
