@@ -19,7 +19,7 @@ static struct config conf;
 static unsigned int cnt_deleted_files;
 
 /* windows files, which have to be deleted! */
-static char *windows_files[] = {
+static const char *windows_files[] = {
 	"Thumbs.db",
 	"desktop.ini",
 	NULL
