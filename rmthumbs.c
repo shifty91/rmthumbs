@@ -84,7 +84,7 @@ static void crawl(const char *path)
 	DIR *dirptr = opendir(path);
 
 	if (!dirptr) {
-		perror("opendir failed()");
+		perror("opendir() failed");
 		return;
 	}
 
