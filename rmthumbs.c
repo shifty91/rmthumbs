@@ -37,7 +37,7 @@ static void usage(void)
 	fprintf(stderr, "(C) 2015 %s <%s>  \n", AUTHOR, EMAIL);
 }
 
-static void *my_memcpy(char *dst, const char *src, size_t n)
+static void *my_memcpy(char *restrict dst, const char *restrict src, size_t n)
 {
     const char *ps = src;
     char *pd = dst;
